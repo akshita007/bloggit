@@ -75,7 +75,8 @@ router.post("/login",(req,res,next)=>{
         res.json({
           success: true,
           status: "Login Successfull!",
-          token: token
+          token: token,
+          user:user.username
         });
     });
   })(req,res,next);
