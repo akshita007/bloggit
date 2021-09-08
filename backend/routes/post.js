@@ -27,7 +27,9 @@ postRouter.use(bodyParser.json());
 
 postRouter.route("/")
 .get((req,res,next)=>{
+    //if(!mongoose.Types.ObjectId.isValid())
     Post.find({})
+  .populate("author")
     .then((post)=>{
         res.statusCode = 200;
         res.setHeader("Content-Type","application/json");
@@ -38,14 +40,15 @@ postRouter.route("/")
 })
 .post(authenticate.verifyUser,upload.single("imageFile"),(req,res,next)=>{
     const post =new Post({
-        author : req.body.author,
+        author: req.user._id,
         title: req.body.title,
         image: req.file.filename,
         content: req.body.content
     });
     post.save()
     .then((post)=>{
-        console.log("POST created is");
+        Post.findOne({_id:req.user._id})
+        .populate("author");
         res.statusCode = 200;
         res.setHeader("Content-Type","application/json");
         res.json({post: post, msg:"Post successfully created!"});
@@ -56,7 +59,7 @@ postRouter.route("/")
     res.statusCode = 403
     res.end("This operation cannot be performed on /post")
 })
-.delete(authenticate.verifyUser,(req,res,next)=>{
+.delete(authenticate.verifyOrdinaryUser, authenticate.verifyAdmin,(req,res,next)=>{
     Post.remove({})
     .then(response=>{
         res.statusCode = 200;
@@ -68,6 +71,7 @@ postRouter.route("/")
 postRouter.route("/:post_id")
 .get((req,res,next)=>{
     Post.findById(req.params.post_id)
+    .populate("author")
     .then((post)=>{
         res.statusCode = 200;
         res.setHeader("Content-Type","application/json");
@@ -83,7 +87,12 @@ postRouter.route("/:post_id")
 .put(authenticate.verifyUser, upload.single("imageFile"),(req,res,next)=>{
     Post.findById(req.params.post_id)
     .then((post)=>{
-        post.author= req.body.author;
+        //console.log("Id is", req.user._id)
+        if(!(post.author._id).equals(req.user._id)){
+            var err = new Error("Only author can change the post!");
+            err.status = 403;
+            return next(err);
+        }
         post.title= req.body.title;
         post.image= req.file.filename;
         post.content= req.body.content;
@@ -99,11 +108,17 @@ postRouter.route("/:post_id")
     .catch(err => next(err));
 })
 .delete(authenticate.verifyUser, (req,res,next)=>{
-    Post.findByIdAndRemove(req.params.post_id)
-    .then(response=>{
+    Post.findById(req.params.post_id)
+    .then(post=>{
+        if(!(post.author._id).equals(req.user._id)){
+            var err = new Error("Only author can delete the post!");
+            err.status = 403;
+            return next(err);
+        }
+        post.remove()
         res.statusCode = 200;
         res.setHeader("Content-Type","application/json");
-        res.json(response);
+        res.json({status:"Post Deleted!"});
     },err =>next(err))
     .catch(err =>next(err));
 });

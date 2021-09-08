@@ -23,8 +23,7 @@ router.post("/register",(req,res,next)=>{
         res.setHeader("Content-Type","application/json");
         res.json({err: err});
       }else{
-        if(req.body.firstName) user.firstName = req.body.firstName;
-        if(req.body.lastName) user.lastName = req.body.lastName;
+        if(req.body.name) user.name = req.body.name;
         user.save((err,user)=>{
           if(err){
             res.statusCode = 500;
@@ -47,20 +46,70 @@ router.post("/register",(req,res,next)=>{
 });
 
 //login the existing user
-router.post("/login",passport.authenticate("local"),(req,res)=>{
-  var token = authenticate.getToken({_id: req.user._id});
-  res.statusCode = 200;
-  res.setHeader("Content-Type","application/json");
-  res.json({
-    success: true,
-    status: "Login Successfull!",
-    token: token
-  });
+router.post("/login",(req,res,next)=>{
+
+  passport.authenticate("local",(err,user,info)=>{
+    if(err)
+      return next(err);
+    if(!user){
+      res.statusCode = 401;
+      res.setHeader("Content-Type","application/json");
+      res.json({
+        success: false,
+        status: "Login Unsuccessfull!",
+        err: info
+      });
+    }req.logIn(user,(err)=>{
+      if(err){
+        res.statusCode = 401;
+        res.setHeader("Content-Type","application/json");
+        res.json({
+          success: false,
+          status: "Login Unsuccessfull!",
+          err:"Could not login user!"
+        });
+      }
+      var token = authenticate.getToken({_id: req.user._id});
+      res.statusCode = 200;
+        res.setHeader("Content-Type","application/json");
+        res.json({
+          success: true,
+          status: "Login Successfull!",
+          token: token
+        });
+    });
+  })(req,res,next);
 });
 
 //logout the existing user
 router.get("/logout",(req,res,next)=>{
   req.logout();
   res.redirect("/post");
+});
+
+//check jwt token
+
+router.get("/checkJwt",(req,res)=>{
+  passport.authenticate("jwt",{session:false},(err,user,info)=>{
+    if(err) return next(err);
+    if(!user){
+      res.statusCode = 401;
+        res.setHeader("Content-Type","application/json");
+        res.json({
+          success: false,
+          status: "Token invalid!",
+          err: info
+        });
+    }
+    else{
+      res.statusCode = 200;
+        res.setHeader("Content-Type","application/json");
+        res.json({
+          success: true,
+          status: "token valid!",
+          user: user
+        });
+      }
+  })(req,res);
 });
 module.exports = router;

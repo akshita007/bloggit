@@ -3,8 +3,8 @@ const Schema = mongoose.Schema;
 
 const Post = new Schema({
     author:{
-        type:String,
-        required: true
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"User"
     },
     title:{
         type:String,
