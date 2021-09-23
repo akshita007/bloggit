@@ -84,18 +84,13 @@ postRouter.route("/:post_id")
     res.statusCode = 400;
     res.end("POST opteration cannot be performed on /post:",req.params.post_id);
 })
-.put(authenticate.verifyUser, upload.single("imageFile"),(req,res,next)=>{
+.put(authenticate.verifyUser,(req,res,next)=>{
     Post.findById(req.params.post_id)
     .then((post)=>{
         //console.log("Id is", req.user._id)
-        if(!(post.author._id).equals(req.user._id)){
-            var err = new Error("Only author can change the post!");
-            err.status = 403;
-            return next(err);
-        }
-        post.title= req.body.title;
-        post.image= req.file.filename;
-        post.content= req.body.content;
+        if((post.author._id).equals(req.user._id)){ 
+        if(req.body.title) post.title= req.body.title;
+        if(req.body.content) post.content= req.body.content;
         
         post.save()
         .then((post)=>{
@@ -104,7 +99,11 @@ postRouter.route("/:post_id")
             res.json({post: post, msg:"Post successfully edited!"});
         },(err)=>next(err))
         .catch(err=> next(err));
-       },(err)=>next(err))
+    }else{
+        var err = new Error("Only author can change the post!");
+            err.status = 403;
+            return next(err);
+    }},(err)=>next(err))
     .catch(err => next(err));
 })
 .delete(authenticate.verifyUser, (req,res,next)=>{
