@@ -1,16 +1,19 @@
-import {Box, makeStyles, Typography} from "@material-ui/core";
+import {useState, useEffect} from 'react';
+import {Box, Button, makeStyles, Typography} from "@material-ui/core";
 import {Edit,Delete} from "@material-ui/icons";
+import {getPost} from "../../sevice/api";
+import {Link} from "react-router-dom";
 
 const useStyle = makeStyles({
     container:{
         padding:'0 100px'
     },
-    image:{
+    pic:{
         width: '100%',
         height: '50vh',
         objectFit:'cover'
     },
-    title:{
+    heading:{
         fontSize: 40,
         fontWeight:600,
         fontFamily:"'Yanone Kaffeesatz', sans-serif",
@@ -20,44 +23,58 @@ const useStyle = makeStyles({
     icons:{
         float:'right',
         '& > *':{
-            padding: 7,
-            margin: 7,
+            margin: 5,
         }
     },
     text:{
         color:'#878787',
         margin: '10px 0 '
     },
-    content:{
+    desc:{
         fontSize:18,
         textAlign:'justify',
         fontFamily:"'Yanone Kaffeesatz', sans-serif",
+    },
+    link:{
+        textDecoration:'none',
+        color:'inherit'
     }
 })
 
-const PostDetails = ()=>{
+const PostDetails = (props)=>{
+    const [post , setPost] = useState({
+        title:'',
+        author:'',
+        content:'',
+        image:'',
+        createdAt:''
+    });
     const classes = useStyle();
-    const post = {
-        "author":"Akshita",
-        "image":"https://images.unsplash.com/photo-1572129421341-77455b1478b3?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxjb2xsZWN0aW9uLXRodW1ibmFpbHx8MTIyMjM3MTR8fGVufDB8fHx8&dpr=1&auto=format&fit=crop&w=550&q=250",
-        "content":"Enim incididunt elit esse nulla quis velit do ullamco enim. Cillum et aute nostrud ut officia aliquip enim eiusmod cupidatat culpa. Nulla nisi exercitation in minim reprehenderit ea eu exercitation pariatur cillum eu ea. Excepteur cillum voluptate pariatur commodo tempor incididunt officia nisi minim. Pariatur tempor elit aliquip ut pariatur non. Cillum nisi velit adipisicing sint voluptate mollit cillum dolore nisi laboris. Lorem laborum cupidatat occaecat proident esse exercitation fugiat veniam.",
-        "title":"Hello world!",
-        "date":"10-10-2021"
-    };
+    useEffect(()=>{
+        const fetchPost = async ()=>{
+            let data = await getPost(props.match.params.id);
+            console.log(data);
+            setPost(data);
+        }
+        fetchPost();
+    },[props]);
+    
+    const url = "https://images.unsplash.com/photo-1572129421341-77455b1478b3?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxjb2xsZWN0aW9uLXRodW1ibmFpbHx8MTIyMjM3MTR8fGVufDB8fHx8&dpr=1&auto=format&fit=crop&w=250&q=150";
+
     return(
         <Box className={classes.container}>
-            <img src={post.image} alt='error' className={classes.image}/>
+            <img src={url} alt='error' className={classes.pic}/>
             <Box className={classes.icons}>
-                <Edit/>
-                <Delete/>
+                <Link to='/editPost'><Button> <Edit/> </Button></Link>
+                <Button> <Delete/> </Button>
             </Box>
+        
+                <Typography className = {classes.heading}>{post.title}</Typography>
+                <Typography className = {classes.text}>Created By: {post.author.username}</Typography>
+            
             <Box>
-                <Typography className = {classes.title}>{post.title}</Typography>
-                <Typography className = {classes.text}>Created By: {post.author}</Typography>
-            </Box>
-            <Box>
-                <Typography className = {classes.content}>{post.content}</Typography>
-                <Typography className = {classes.text}>posted on: {post.date}</Typography>
+                <Typography className = {classes.desc}>{post.content}</Typography>
+                <Typography className = {classes.text}>posted on: {new Date(post.createdAt).toDateString()}</Typography>
             </Box>
         </Box>
     )

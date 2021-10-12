@@ -9,13 +9,13 @@ const useStyles = makeStyles({
         borderRadius: 10,
         border: '1px solid #000000',
         display: 'flex',
-        alignItems:'center',
+        alignItems:'center',  
         flexDirection:"column",
         '& > *':{
             padding: '0 5px 5px 5px'
         }
         },
-    image:{
+    pic:{
         height: 150,
         width: "100%",
         objectFit:'cover',
@@ -31,29 +31,31 @@ const useStyles = makeStyles({
         fontWeight: 600,
         fontFamily:"'Yanone Kaffeesatz', sans-serif"
     },
-    content:{
+    desc:{
+        maxHeight: 90,
         fontSize: 16,
+        margin:5,
+        overflow: 'hidden',
+        textOverflow:'ellipsis',
         wordBreak:'break-word',
         fontFamily:"'Yanone Kaffeesatz', sans-serif"
     }
 })
 
-const Post = ()=>{
+const Post = ({post})=>{
     const classes = useStyles();
-    const post = {
-        "author":"Akshita",
-        "image":"https://images.unsplash.com/photo-1572129421341-77455b1478b3?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxjb2xsZWN0aW9uLXRodW1ibmFpbHx8MTIyMjM3MTR8fGVufDB8fHx8&dpr=1&auto=format&fit=crop&w=250&q=150",
-        "content":"You you are my universe by BTS and ColdsPlay",
-        "title":"Hello world!",
-        "date":"10-10-2021"
-    };
+    
+    const url = "https://images.unsplash.com/photo-1572129421341-77455b1478b3?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxjb2xsZWN0aW9uLXRodW1ibmFpbHx8MTIyMjM3MTR8fGVufDB8fHx8&dpr=1&auto=format&fit=crop&w=250&q=150";
+
     return(
         <Box className={classes.container}>
-            <img src = {post.image} alt= "Looks like a error to me! :(" className={classes.image}/>
+            <img src = {url} alt= "Looks like a error to me! :(" className={classes.pic}/>
             <Typography className={classes.heading}>{post.title}</Typography>
-            <Typography className={classes.text}>Author: {post.author}</Typography>
-            <Typography className={classes.content}>{post.content}</Typography>
-            <Typography className={classes.text}>Posted on:{post.date}</Typography>
+            <Typography className={classes.text}>Author: {post.author.username}</Typography>
+            <Box className={classes.desc}>
+            <Typography >{post.content}</Typography>
+            </Box>Tap to read more...
+            <Typography className={classes.text} >Posted on:{new Date(post.createdAt).toDateString()}</Typography>
         </Box>
     )
 };
