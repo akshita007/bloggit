@@ -6,7 +6,7 @@ const useStyles = makeStyles({
 btn:{
     margin: 20,
     width: "86%",
-    background:"blue",
+    background: '#00BFFF',
     color:"#ffffff"
 },
 table:{
