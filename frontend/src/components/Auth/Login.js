@@ -1,5 +1,7 @@
-import {Box, Button, FormControl, InputBase,  makeStyles, Typography} from "@material-ui/core";
+import {Box, Button, FormControl, makeStyles, TextField, Typography} from "@material-ui/core";
+import {useState} from "react";
 import {Link} from "react-router-dom";
+import { loginUser} from "../../sevice/api";
 
 const useStyles = makeStyles({
     container:{
@@ -20,9 +22,10 @@ const useStyles = makeStyles({
         display:'flex',
         alignItems:'center',
         '& > *':{
+            width: '100%',
             margin: 18,
             borderBottom:'1px solid black'
-        }
+        },
     },
     btn:{
         background: '#00BFFF',
@@ -39,17 +42,32 @@ const useStyles = makeStyles({
 
 const Login=()=>{
     const classes = useStyles();
+    const [username,setusername]= useState('');
+    const [password,setpass]= useState('');
+    
+    const handleSubmit = async ()=>{
+        if(username !== '' && password !== ''){
+            await loginUser({username,password});
+            window.location.replace('/')
+        }else{
+            alert("All fields are required!")
+        }
+        
+    }
     return(
         <Box className={classes.container}>
             <Typography className = {classes.title}>Login</Typography>
             <FormControl className = {classes.form}>
-                <Typography>Username
-                <InputBase placeholder='Username'></InputBase>
-                </Typography>
-                <Typography>Password
-                <InputBase placeholder='Password'></InputBase>
-                </Typography>
-                <Button className = {classes.btn} variant='contained'>Login</Button>
+                <TextField label='Email' name='username'
+                type ="email"
+                onChange = {(e)=>setusername(e.target.value)}
+                  required/>
+                <TextField label='Password' name='password'
+                onChange = {(e)=>setpass(e.target.value)}
+                 type='password' required/>
+                <Button className = {classes.btn} 
+                onClick ={()=>handleSubmit()}
+                 variant='contained'>Login</Button>
                  <Link to = '/register' className = {classes.link}>Not an existing user? Register Here!</Link>
             </FormControl> 
         </Box>

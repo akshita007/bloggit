@@ -1,6 +1,6 @@
 import {Box, Button, FormControl, InputBase, makeStyles, TextareaAutosize} from  '@material-ui/core';
 import {AddCircle} from '@material-ui/icons';
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import {useHistory} from 'react-router-dom';
 import {createPost} from '../../sevice/api';
 
@@ -10,7 +10,7 @@ const useStyles = makeStyles({
     },
     image:{
         width: '100%',
-        height: '50vh',
+        height: '400px',
         objectFit:'cover'
     },
     form:{
@@ -41,38 +41,61 @@ const useStyles = makeStyles({
 });
 
 const CreatePost = ()=>{
-    const initialState = {
-        author:"Akshita",
-        image:"https://images.unsplash.com/photo-1572129421341-77455b1478b3?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxjb2xsZWN0aW9uLXRodW1ibmFpbHx8MTIyMjM3MTR8fGVufDB8fHx8&dpr=1&auto=format&fit=crop&w=550&q=250",
-        content:"",
-        title:"",
-        date:"10-10-2021"
-    };
-    const [post,setPost] = useState(initialState);
+
+    const [title,setTitle] = useState('');
+    const [content,setContent] = useState('');
+    const [file, setFile] = useState();
+    const [image,setImage] = useState();
     const history = useHistory(); 
     const classes = useStyles();
     const handleChange =(e)=>{
-        setPost({...post, [e.target.name]:e.target.value })
+        if(!e.target.files || e.target.files.length === 0) {
+            setFile(undefined);
+            return
+        }
+        setFile(e.target.files[0])
     };
+
+    useEffect(()=>{
+            if(!file){
+                setImage(undefined)
+                return
+            }
+            const url = URL.createObjectURL(file)
+            setImage(url)
+
+            return()=> URL.revokeObjectURL(url)
+    },[file]);
+
+    
     const publishPost = async()=>{
-        await createPost(post);
+       const formData = new FormData()
+       formData.append('title',title);
+       formData.append('content',content);
+       formData.append('imageFile',file);
+        await createPost(formData)
         history.push('/');
     };
-         const image = "https://images.unsplash.com/photo-1572129421341-77455b1478b3?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxjb2xsZWN0aW9uLXRodW1ibmFpbHx8MTIyMjM3MTR8fGVufDB8fHx8&dpr=1&auto=format&fit=crop&w=550&q=250";
-
     return(
         <Box className={classes.container}>
-            <img src={image} alt="error" className={classes.image}/>
-            <FormControl className = {classes.form}>
-                <AddCircle fontSize='large' color='action'/>
+            {file && <img src={image} alt="error" className={classes.image}/>}
+            <FormControl className = {classes.form} >
+                <label htmlFor='imageFile'>
+                    <AddCircle fontSize='large' color='action'/></label>
+                <input
+                type='file' id='imageFile'
+                name='imageFile'
+                onChange={(e)=> handleChange(e)}
+                style={{display:'none'}}
+                />
                 <InputBase name='title' 
-                onChange = {(e)=>handleChange(e)} 
+                onChange = {(e)=>setTitle(e.target.value)} 
                 placeholder='Title' 
                 className={classes.textField}></InputBase>
             </FormControl>
             <TextareaAutosize minRows={7} 
             name = 'content' 
-            onChange = {(e)=>handleChange(e)} 
+            onChange = {(e)=>setContent(e.target.value)} 
             placeholder="What's on your mind!" 
             className = {classes.textArea}></TextareaAutosize>
             <Button onClick = {()=> publishPost()} variant='contained' className={classes.btn}>Publish Post</Button>

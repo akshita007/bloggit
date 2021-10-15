@@ -1,8 +1,7 @@
-
-
-
 import {Box, Button, FormControl, InputBase, makeStyles, TextareaAutosize} from  '@material-ui/core';
-import {AddCircle} from '@material-ui/icons';
+import {useEffect, useState} from 'react';
+import {useHistory} from 'react-router-dom';
+import {editPost, getPost} from '../../sevice/api';
 
 const useStyles = makeStyles({
     container:{
@@ -10,7 +9,7 @@ const useStyles = makeStyles({
     },
     image:{
         width: '100%',
-        height: '50vh',
+        height: '400px',
         objectFit:'cover'
     },
     form:{
@@ -40,24 +39,52 @@ const useStyles = makeStyles({
     },
 });
 
-const EditPost = ()=>{
+const EditPost = ({match})=>{
     const classes = useStyles();
-    const post = {
-        "author":"Akshita",
-        "image":"https://images.unsplash.com/photo-1572129421341-77455b1478b3?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxjb2xsZWN0aW9uLXRodW1ibmFpbHx8MTIyMjM3MTR8fGVufDB8fHx8&dpr=1&auto=format&fit=crop&w=550&q=250",
-        "content":"Enim incididunt elit esse nulla quis velit do ullamco enim. Cillum et aute nostrud ut officia aliquip enim eiusmod cupidatat culpa. Nulla nisi exercitation in minim reprehenderit ea eu exercitation pariatur cillum eu ea. Excepteur cillum voluptate pariatur commodo tempor incididunt officia nisi minim. Pariatur tempor elit aliquip ut pariatur non. Cillum nisi velit adipisicing sint voluptate mollit cillum dolore nisi laboris. Lorem laborum cupidatat occaecat proident esse exercitation fugiat veniam.",
-        "title":"Hello world!",
-        "date":"10-10-2021"
+    const history = useHistory();
+    const [post, setPost] = useState({
+        _id:'',
+        title:'',
+        content:'',
+        image:''
+    });
+    useEffect(()=>{
+        const fetchDetail = async ()=>{
+            const data = await getPost(match.params.id);
+            console.log(data);
+            setPost(data);
+        }
+        fetchDetail();
+    },[match.params.id])
+
+    const handleChange =(e)=>{
+        setPost({...post, [e.target.name]:e.target.value })
     };
+    const UpdatePost = async()=>{
+        await editPost(match.params.id,post);
+        history.push(`/postDetails/${match.params.id}`);
+    };
+
     return(
         <Box className={classes.container}>
-            <img src={post.image} alt="error" className={classes.image}/>
+            <img src={`/uploads/${post.image}`} alt="error" className={classes.image}/>
             <FormControl className = {classes.form}>
-                <AddCircle fontSize='large' color='action'/>
-                <InputBase placeholder='Title' className={classes.textField}></InputBase>
+                {/* <AddCircle fontSize='large' color='action'/> */}
+                <InputBase value = {post.title} 
+                name='title'
+                placeholder='Title' 
+                className={classes.textField}
+                onChange = {(e)=> handleChange(e)}></InputBase>
             </FormControl>
-            <TextareaAutosize minRows={7} placeholder="What's on your mind!" className = {classes.textArea}></TextareaAutosize>
-            <Button variant='contained' className={classes.btn}>Update</Button>
+            <TextareaAutosize value = {post.content}
+            name='content'
+            minRows={7} 
+            placeholder="What's on your mind!" 
+            className = {classes.textArea}
+            onChange = {(e)=> handleChange(e)}></TextareaAutosize>
+            <Button variant='contained' 
+            className={classes.btn} 
+            onClick={()=>UpdatePost()}>Update</Button>
         </Box>
     )
 };

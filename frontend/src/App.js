@@ -7,8 +7,22 @@ import CreatePost from "./components/Post/CreatePost";
 import EditPost from "./components/Post/EditPost";
 import Login from "./components/Auth/Login";
 import Register from "./components/Auth/Register";
+import {useEffect} from "react";
+import {logoutUser, verifyToken} from "./sevice/api";
 
 function App() {
+  useEffect(()=>{
+    const checkToken = async () =>{
+      if(localStorage.getItem('token') !==null){
+        let data =  await verifyToken();
+        if(!data.success){
+          await logoutUser();
+          window.location.reload();
+        }
+      }
+    }
+    checkToken()
+  },[])
   return (
       <Router>
         <Header/>
@@ -17,7 +31,7 @@ function App() {
             <Route exact path="/" component={Home}></Route>
             <Route path = '/postDetails/:id' component={PostDetails}></Route>
             <Route path = '/createPost' component={CreatePost}></Route>
-            <Route path = '/editPost' component={EditPost}></Route>
+            <Route path = '/editPost/:id' component={EditPost}></Route>
             <Route path = '/login' component={Login}></Route>
             <Route path = '/register' component= {Register}></Route>
           </Switch>

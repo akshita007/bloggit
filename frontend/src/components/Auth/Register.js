@@ -1,8 +1,8 @@
-
-
-
-import {Box, Button, FormControl, InputBase,  makeStyles, Typography} from "@material-ui/core";
+import {Box, Button, FormControl, makeStyles, TextField, Typography} from "@material-ui/core";
+import {useState} from "react";
+import { useHistory } from "react-router-dom";
 import {Link} from "react-router-dom";
+import {registerUser} from "../../sevice/api";
 
 const useStyles = makeStyles({
     container:{
@@ -43,27 +43,43 @@ const useStyles = makeStyles({
 
 const Register=()=>{
     const classes = useStyles();
+    const [username,setusername]= useState('');
+    const [name,setname]= useState('');
+    const [password,setpass]= useState('');
+    //const [data,setData]=useState({});
+    const history = useHistory();
+    
+    const handleSubmit = async ()=>{
+        // console.log(data)
+        if(username !== '' && name !=='' && password!==""){
+            await registerUser({username,name,password})
+            history.push('/login')
+        }else{
+            alert("All fiels are required")
+        }
+        
+    }
+    //const rex = new RegExp("/^[a-zA-Z0-9.! #$%&'*+/=? ^_`{|}~-]+@[a-zA-Z0-9-]+(?:\\. [a-zA-Z0-9-]+)*$/");
     return(
         <Box className={classes.container}>
             <Typography className = {classes.title}>Register</Typography>
             <FormControl className = {classes.form}>
-            <Typography>Username
-                <InputBase placeholder='Name'></InputBase>
-                </Typography>
-                <Typography>Username
-                <InputBase placeholder='Username'></InputBase>
-                </Typography>
-                <Typography>Password
-                <InputBase placeholder='Password'></InputBase>
-                </Typography>
-                <Typography>Confirm Password
-                <InputBase placeholder='Confirm Password'></InputBase>
-                </Typography>
-                <Button className = {classes.btn} variant='contained'>Register</Button>
+               <TextField label='Email' type ='email' 
+                  name='username'
+                  onChange = {(e)=>setusername(e.target.value)}
+                  required/>
+                <TextField label='Name' name='name'
+                  onChange = {(e)=>setname(e.target.value)}
+                  required/>
+                <TextField label='Password' name='password'
+                  onChange = {(e)=>setpass(e.target.value)}
+                  type='password' required/>
+                <Button className = {classes.btn} 
+                onClick = {()=>handleSubmit()}
+                variant='contained'>Register</Button>
                  <Link to = '/login' className = {classes.link}>An existing user? SignIn Here!</Link>
             </FormControl> 
         </Box>
     )
 };
-
 export default Register;
