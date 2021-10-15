@@ -1,4 +1,4 @@
-import {Button, makeStyles, Table, TableCell, TableHead, TableRow} from "@material-ui/core";
+import {Button, makeStyles} from "@material-ui/core";
 import {Link} from "react-router-dom";
 
 
@@ -17,10 +17,12 @@ const Filters = ()=>{
     const classes = useStyles();
     return(
         <>
-        <Link to='/CreatePost' style={{textDecoration:'none',color:'inherit'}}>
+        {localStorage.getItem('token') !== null ?(<Link to='/CreatePost' style={{textDecoration:'none',color:'inherit'}}>
         <Button variant = "contained" className = {classes.btn}>Create Post</Button>
-        </Link>
-        <Table className={classes.table}> 
+        </Link>):(<Link to='/login' style={{textDecoration:'none',color:'inherit'}}>
+        <Button variant = "contained" className = {classes.btn}>Create Post</Button>
+        </Link>)}
+        {/* <Table className={classes.table}> 
             <TableHead>
                 <TableRow>
                     <TableCell>Filter</TableCell>
@@ -32,7 +34,7 @@ const Filters = ()=>{
                     <TableCell>Oldest to Newest</TableCell>
                 </TableRow>
             </TableHead>
-        </Table>
+        </Table> */}
         </>
     )
 };

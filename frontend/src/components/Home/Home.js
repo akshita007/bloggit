@@ -12,7 +12,7 @@ function Home(props) {
             <Grid item lg={2} xs={12} sm={4}>
                 <Filters/>
             </Grid>
-            <Grid container item lg={10} xs={12} sm={14}>
+            <Grid container item lg={10} xs={12} sm={12}>
                 <Posts/>
             </Grid>
         </Grid>

@@ -29,6 +29,7 @@ const useStyles = makeStyles({
     heading:{
         fontSize: 21,
         fontWeight: 600,
+        textAlign:'center',
         fontFamily:"'Yanone Kaffeesatz', sans-serif"
     },
     desc:{
@@ -45,13 +46,13 @@ const useStyles = makeStyles({
 const Post = ({post})=>{
     const classes = useStyles();
     
-    const url = "https://images.unsplash.com/photo-1572129421341-77455b1478b3?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxjb2xsZWN0aW9uLXRodW1ibmFpbHx8MTIyMjM3MTR8fGVufDB8fHx8&dpr=1&auto=format&fit=crop&w=250&q=150";
+    const url =`/uploads/${post.image}` || "https://images.unsplash.com/photo-1572129421341-77455b1478b3?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxjb2xsZWN0aW9uLXRodW1ibmFpbHx8MTIyMjM3MTR8fGVufDB8fHx8&dpr=1&auto=format&fit=crop&w=250&q=150";
 
     return(
         <Box className={classes.container}>
-            <img src = {url} alt= "Looks like a error to me! :(" className={classes.pic}/>
+            <img src ={url} alt= "Looks like a error to me! :( " className={classes.pic}/>
             <Typography className={classes.heading}>{post.title}</Typography>
-            <Typography className={classes.text}>Author: {post.author.username}</Typography>
+            <Typography className={classes.text}>Author: {post.author.name}</Typography>
             <Box className={classes.desc}>
             <Typography >{post.content}</Typography>
             </Box>Tap to read more...

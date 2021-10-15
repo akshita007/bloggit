@@ -1,7 +1,8 @@
+import { useHistory } from 'react-router-dom';
 import {useState, useEffect} from 'react';
 import {Box, Button, makeStyles, Typography} from "@material-ui/core";
 import {Edit,Delete} from "@material-ui/icons";
-import {getPost} from "../../sevice/api";
+import {deletePost, getPost} from "../../sevice/api";
 import {Link} from "react-router-dom";
 
 const useStyle = makeStyles({
@@ -10,7 +11,7 @@ const useStyle = makeStyles({
     },
     pic:{
         width: '100%',
-        height: '50vh',
+        height: '400px',
         objectFit:'cover'
     },
     heading:{
@@ -43,12 +44,14 @@ const useStyle = makeStyles({
 
 const PostDetails = (props)=>{
     const [post , setPost] = useState({
+        _id:'',
         title:'',
         author:'',
         content:'',
         image:'',
         createdAt:''
     });
+    const history = useHistory();
     const classes = useStyle();
     useEffect(()=>{
         const fetchPost = async ()=>{
@@ -59,18 +62,22 @@ const PostDetails = (props)=>{
         fetchPost();
     },[props]);
     
-    const url = "https://images.unsplash.com/photo-1572129421341-77455b1478b3?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxjb2xsZWN0aW9uLXRodW1ibmFpbHx8MTIyMjM3MTR8fGVufDB8fHx8&dpr=1&auto=format&fit=crop&w=250&q=150";
+    const handleDelete = async()=>{
+        await deletePost(post._id)
+        history.push(`/`);
+    }
 
     return(
         <Box className={classes.container}>
-            <img src={url} alt='error' className={classes.pic}/>
-            <Box className={classes.icons}>
-                <Link to='/editPost'><Button> <Edit/> </Button></Link>
-                <Button> <Delete/> </Button>
-            </Box>
+            <img src={`/uploads/${post.image}`} alt='error' className={classes.pic}/>
+            {localStorage.getItem('user') === post.author.username ?
+            (<Box className={classes.icons}>
+                <Link to={`/editPost/${post._id}`}><Button> <Edit/> </Button></Link>
+                <Button onClick={()=>handleDelete()}> <Delete/> </Button>
+            </Box>):''}
         
                 <Typography className = {classes.heading}>{post.title}</Typography>
-                <Typography className = {classes.text}>Created By: {post.author.username}</Typography>
+                <Typography className = {classes.text}>Created By: {post.author.name}</Typography>
             
             <Box>
                 <Typography className = {classes.desc}>{post.content}</Typography>
