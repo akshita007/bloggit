@@ -8,7 +8,7 @@ const authenticate = require("../authenticate");
 
 const storage = multer.diskStorage({
     destination: (req,file,cb)=>{
-        cb(null,"../../blogg/blog/public/uploads/");;
+        cb(null,"../../blogg/frontend/public/uploads/");;
     },
     filename: (req,file,cb)=>{
         cb(null,file.originalname);
