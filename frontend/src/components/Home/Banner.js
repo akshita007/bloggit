@@ -8,8 +8,10 @@ image:{
     height:'90vh',
     display:"flex",
     alignItems:"center",
-    justifyContent:"center",
+    justifyContent:'center',
     "& > *":{
+        background: 'rgba(255,255,255,0.8)',
+        textAlign:'center',
         color:"black",
         fontSize:"70px",
         fontFamily:"comic sans",
@@ -21,9 +23,9 @@ const Banner=()=> {
     const classes = useStyles();
     return (
         <Box className={classes.image}>
-            <Typography>Welcome</Typography>
+            {!localStorage.getItem('token')?(<Typography>Hello! Why don't you login, and enter in the world of blogging!</Typography>):(<Typography>Welcome Back! {localStorage.getItem('user')} </Typography>)}
         </Box>
-    );
-}
+    )
+};
 
 export default Banner;
