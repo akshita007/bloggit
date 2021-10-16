@@ -1,6 +1,7 @@
 import {HashRouter as Router, Switch,Route} from "react-router-dom";
 import {Box} from "@material-ui/core";
 import Header from "./components/Header";
+import Footer from "./components/Footer";
 import Home from "./components/Home/Home";
 import PostDetails from "./components/Post/PostDetail";
 import CreatePost from "./components/Post/CreatePost";
@@ -36,6 +37,7 @@ function App() {
             <Route path = '/register' component= {Register}></Route>
           </Switch>
         </Box>
+        <Footer/>
       </Router>
   );
 }
