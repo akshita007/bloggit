@@ -73,8 +73,13 @@ const CreatePost = ()=>{
        formData.append('title',title);
        formData.append('content',content);
        formData.append('imageFile',file);
+       if(! formData.get('title') ==='' && formData.get('content') ==='' && formData.get('imageFile') ===''){
         await createPost(formData)
         history.push('/');
+       }else{
+           alert('Insert data in all the fields');
+       }
+        
     };
     return(
         <Box className={classes.container}>
