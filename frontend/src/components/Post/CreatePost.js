@@ -73,7 +73,7 @@ const CreatePost = ()=>{
        formData.append('title',title);
        formData.append('content',content);
        formData.append('imageFile',file);
-       if(! formData.get('title') ==='' && formData.get('content') ==='' && formData.get('imageFile') ===''){
+       if( title !== '' && content !=='' && image !==''){
         await createPost(formData)
         history.push('/');
        }else{
