@@ -1,7 +1,11 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # dependencies
+<<<<<<< HEAD
 /public/uploads
+=======
+./public/uploads
+>>>>>>> 69973eaec23ac05f0eff3aa95ba30d89f0f20351
 /node_modules
 /.pnp
 .pnp.js
