@@ -6,6 +6,7 @@ import {createPost} from '../../sevice/api';
 
 const useStyles = makeStyles({
     container:{
+        margin:100,
         padding:'0 100px'
     },
     image:{
