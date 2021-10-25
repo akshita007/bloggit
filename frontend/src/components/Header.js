@@ -41,9 +41,6 @@ const Header = ()=>{
                 <Link to='/' className={classes.link}>
                     <Typography>HOME</Typography>
                 </Link>
-                <Link to='/aboutus' className={classes.link}>
-                    <Typography>ABOUT US</Typography>
-                </Link>
                 {!localStorage.getItem('token')?
                 (<Link to = '/login' className={classes.link}>
                     <Typography>LOGIN</Typography>

@@ -24,6 +24,7 @@ const useStyles = makeStyles({
         display:'flex',
         alignItems:'center',
         '& > *':{
+            width:'100%',
             margin: 18,
             borderBottom:'1px solid black'
         }
